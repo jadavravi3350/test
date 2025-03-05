@@ -524,29 +524,6 @@ p {
   height: 110vh;
 }
 
-input[type="range"]::-webkit-slider-runnable-track {
-  width: 100%;
-  height: 5px;
-  background: linear-gradient(to right, #e8e8e8, #e8e8e8);
-  /* Change to your desired color */
-  border-radius: 5px;
-  border: none;
-}
-
-input[type="range"]::-webkit-slider-thumb {
-  /* -webkit-appearance: none;
-    appearance: none; */
-  width: 90%;
-  height: 5px;
-  /* display: none; */
-  background: #4caf50;
-  /* Thumb color */
-  border-radius: 5px;
-  /* border: 2px solid #fff; */
-  cursor: pointer;
-  margin-top: 0px;
-}
-
 .CheckAvailability {
   width: 85%;
   border-radius: 10px;
@@ -746,7 +723,6 @@ input[type="range"]::-webkit-slider-thumb {
 .DashboardMain-width {
   display: flex;
   justify-content: center;
-  /* height: 100vh; */
   margin-top: 10px;
 
 }
@@ -769,34 +745,28 @@ input[type="range"]::-webkit-slider-thumb {
   border-radius: 5px;
 }
 
-.Dashboardcolor
-{
+.Dashboardcolor {
   background: #e4eff7;
 }
 
-.Dashboardcolor:focus
-{
+.Dashboardcolor:focus {
   background: #006ebd;
   color: #fff;
 }
 
-.modal-dialog-width
-
-{
+.modal-dialog-width {
   width: 400px;
 }
 
 
-.postfiltercolor:focus
-{
+.postfiltercolor:focus {
   background: #006ebd;
   color: white;
 }
 
-.jobfilter
-{
+.jobfilter {
   width: 380px;
-  box-shadow: 0 0 10px  rgb(161, 161, 161);
+  box-shadow: 0 0 10px rgb(161, 161, 161);
 }
 
 @media (max-width: 800px) {
@@ -809,17 +779,162 @@ input[type="range"]::-webkit-slider-thumb {
     width: 100%;
   }
 
-  .modal-dialog-width
+  .modal-dialog-width {
+    width: 100%;
+  }
 
-{
+
+  .jobfilter {
+    width: 300px;
+  }
+
+}
+
+
+.ri-chat-3-line {
+  cursor: pointer;
+}
+
+/* Chat Window Styling */
+.chat-window {
+  height: 400px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Message Styling */
+.message {
+  max-width: 70%;
+  padding: 10px;
+  margin: 5px;
+  border-radius: 10px;
+}
+
+
+
+.message.received {
+  background-color: #f1f1f1;
+  align-self: flex-end;
+  /* Received messages on the left */
+}
+
+.message.sent {
+  background-color: #007bff;
+  color: white;
+  align-self: flex-end;
+  /* Sent messages on the right */
+}
+
+/* Timestamp Styling */
+.text-end {
+  font-size: 10px;
+  color: #666;
+}
+
+
+
+/*=============================== New css add last time ============= */
+
+.MainMessageLaw {
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  height: 80vh; /* Full viewport height */
+  margin: 0;
+}
+
+.messages-header {
+  border-bottom: 1px solid #dee2e6;
+  padding: 1rem;
+  flex-shrink: 0; /* Prevent header from shrinking */
+}
+
+.messages-header h1 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.chat-container {
+  flex-grow: 1; /* Take up remaining space */
+  padding: 1rem;
+  overflow-y: auto; /* Enable scrolling for chat container */
+  height: calc(100vh - 150px); /* Adjust height based on header and input box */
+}
+
+.profile-pic {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid #dee2e6;
+  flex-shrink: 0;
+}
+
+.profile-pic img {
   width: 100%;
+  height: 100%;
+  border-radius: 50%;
 }
 
-
-.jobfilter
-{
-  width: 300px;
+.sender-name {
+  font-size: 1.125rem;
+  margin-left: 1rem;
 }
 
+.message-bubble {
+  max-width: 300px;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  margin-bottom: 0.5rem;
+}
 
+.message-bubble.sent {
+  background-color: #007bff;
+  color: white;
+  align-self: flex-end;
+}
+
+.message-bubble.received {
+  background-color: #f1f3f4;
+  color: black;
+  align-self: flex-start;
+}
+
+.message-time {
+  font-size: 0.75rem;
+  color: #6c757d;
+  margin-top: 0.25rem;
+}
+
+.input-box {
+  border-top: 1px solid #dee2e6;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0; /* Prevent input box from shrinking */
+}
+
+.input-box input {
+  flex-grow: 1;
+  padding: 0.5rem;
+  border: 1px solid #dee2e6;
+  border-radius: 0.75rem;
+  margin-right: 0.5rem;
+}
+
+.input-box button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

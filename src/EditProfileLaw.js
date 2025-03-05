@@ -7,7 +7,6 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import { Calendar } from 'primereact/calendar';
 import axios from 'axios';
 
-
 function EditProfileLaw() {
 
     const LawtokenId = JSON.parse(localStorage.getItem("Lawyertoken"));
@@ -333,13 +332,12 @@ const Edit = () => {
 
                 alert(res.data.message + " Re Login..?")
 
-                if(res.data.message=="Lawyer Edit SuccessFully")
-                {
+                if (res.data.message == "Lawyer Edit SuccessFully") {
                     localStorage.removeItem("Lawyertoken")
 
                     navi("/LawyerLogin")
                 }
-               
+
             })
 
             .catch((error) => {
@@ -372,7 +370,7 @@ const Edit = () => {
                         <div class="d-flex flex-wrap justify-content-between">
 
                             <div class="form-group col-12 col-md-6 p-2">
-                                <label  className='fw-bold mb-2' style={{ fontSize: "16px" }}>Full Name</label>
+                                <label className='fw-bold mb-2' style={{ fontSize: "16px" }}>Full Name</label>
                                 <input type="text" class="form-control form-control-lg" placeholder="Enter the name"
 
                                     value={fullName}
@@ -856,6 +854,29 @@ const Payment = () => {
 
 
 const Messages = () => {
+    const [user, setuser] = useState([]);
+    const navi = useNavigate();
+
+    useEffect(() => {
+        const fetchMessages = async () => {
+            try {
+                const response = await axios.get(
+                    `https://lawyer-management-system-api.onrender.com/user/fetch-user`
+                );
+                setuser(response.data);
+
+            } catch (error) {
+                console.error("Error fetching messages:", error);
+            }
+        };
+
+        fetchMessages();
+    }, []);
+
+    function handleuser(id) {
+        navi(`/MessageLaw/${id}`)
+    }
+
     return (<>
 
         <div>
@@ -863,427 +884,38 @@ const Messages = () => {
 
             <div style={{ height: "63vh", overflowY: "scroll" }} className='MessagesScroll'>
 
-                <div className='border-bottom border-1  py-2 d-flex gap-2 flex-wrap' >
+                {
+                    user.map((v) => (
+                        <div onClick={() => { handleuser(v._id) }} className='border-bottom border-1  py-2 d-flex gap-2 flex-wrap' >
 
-                    <div className=' col-2 col-lg-1  text-center'>
-                        <img src="../image/available2.png" alt="" width={60} />
-                    </div>
-
-                    <div className=' col-12 col-lg-10'>
-                        <div className='d-flex justify-content-between '>
-
-                            <div>
-                                <h6 className=' fs-5 fw-bold'>Wade warren</h6>
+                            <div className=' col-2 col-lg-1  text-center'>
+                                <img src="../image/available2.png" alt="" width={60} />
                             </div>
 
-                            <div className='text-secondary'>
-                                11:23 pm
+                            <div className=' col-12 col-lg-10'>
+                                <div className='d-flex justify-content-between '>
 
+                                    <div>
+                                        <h6 className=' fs-5 fw-bold'>{v.name}</h6>
+                                    </div>
+
+                                    <div className='text-secondary'>
+                                        11:23 pm
+
+                                    </div>
+                                </div>
+
+                                <p style={{ fontSize: "14px" }} className=" text-secondary">
+                                    Lorem ipsum dolor sit amet
+                                </p>
                             </div>
+
                         </div>
-
-                        <p style={{ fontSize: "14px" }} className=" text-secondary">
-                            Lorem ipsum dolor sit amet
-                        </p>
-                    </div>
-
-                </div>
-
-                <div className='border-bottom border-1  py-2 d-flex gap-2 flex-wrap' >
-
-                    <div className=' col-2 col-lg-1  text-center'>
-                        <img src="../image/available2.png" alt="" width={60} />
-                    </div>
-
-                    <div className=' col-12 col-lg-10'>
-                        <div className='d-flex justify-content-between '>
-
-                            <div>
-                                <h6 className=' fs-5 fw-bold'>Wade warren</h6>
-                            </div>
-
-                            <div className='text-secondary'>
-                                11:23 pm
-
-                            </div>
-                        </div>
-
-                        <p style={{ fontSize: "14px" }} className=" text-secondary">
-                            Lorem ipsum dolor sit amet
-                        </p>
-                    </div>
-
-                </div>
-
-                <div className='border-bottom border-1  py-2 d-flex gap-2 flex-wrap' >
-
-                    <div className=' col-2 col-lg-1  text-center'>
-                        <img src="../image/available2.png" alt="" width={60} />
-                    </div>
-
-                    <div className=' col-12 col-lg-10'>
-                        <div className='d-flex justify-content-between '>
-
-                            <div>
-                                <h6 className=' fs-5 fw-bold'>Wade warren</h6>
-                            </div>
-
-                            <div className='text-secondary'>
-                                11:23 pm
-
-                            </div>
-                        </div>
-
-                        <p style={{ fontSize: "14px" }} className=" text-secondary">
-                            Lorem ipsum dolor sit amet
-                        </p>
-                    </div>
-
-                </div>
-
-                <div className='border-bottom border-1  py-2 d-flex gap-2 flex-wrap' >
-
-                    <div className=' col-2 col-lg-1  text-center'>
-                        <img src="../image/available2.png" alt="" width={60} />
-                    </div>
-
-                    <div className=' col-12 col-lg-10'>
-                        <div className='d-flex justify-content-between '>
-
-                            <div>
-                                <h6 className=' fs-5 fw-bold'>Wade warren</h6>
-                            </div>
-
-                            <div className='text-secondary'>
-                                11:23 pm
-
-                            </div>
-                        </div>
-
-                        <p style={{ fontSize: "14px" }} className=" text-secondary">
-                            Lorem ipsum dolor sit amet
-                        </p>
-                    </div>
-
-                </div>
-
-                <div className='border-bottom border-1  py-2 d-flex gap-2 flex-wrap' >
-
-                    <div className=' col-2 col-lg-1  text-center'>
-                        <img src="../image/available2.png" alt="" width={60} />
-                    </div>
-
-                    <div className=' col-12 col-lg-10'>
-                        <div className='d-flex justify-content-between '>
-
-                            <div>
-                                <h6 className=' fs-5 fw-bold'>Wade warren</h6>
-                            </div>
-
-                            <div className='text-secondary'>
-                                11:23 pm
-
-                            </div>
-                        </div>
-
-                        <p style={{ fontSize: "14px" }} className=" text-secondary">
-                            Lorem ipsum dolor sit amet
-                        </p>
-                    </div>
-
-                </div>
-
-                <div className='border-bottom border-1  py-2 d-flex gap-2 flex-wrap' >
-
-                    <div className=' col-2 col-lg-1  text-center'>
-                        <img src="../image/available2.png" alt="" width={60} />
-                    </div>
-
-                    <div className=' col-12 col-lg-10'>
-                        <div className='d-flex justify-content-between '>
-
-                            <div>
-                                <h6 className=' fs-5 fw-bold'>Wade warren</h6>
-                            </div>
-
-                            <div className='text-secondary'>
-                                11:23 pm
-
-                            </div>
-                        </div>
-
-                        <p style={{ fontSize: "14px" }} className=" text-secondary">
-                            Lorem ipsum dolor sit amet
-                        </p>
-                    </div>
-
-                </div>
-
-                <div className='border-bottom border-1  py-2 d-flex gap-2 flex-wrap' >
-
-                    <div className=' col-2 col-lg-1  text-center'>
-                        <img src="../image/available2.png" alt="" width={60} />
-                    </div>
-
-                    <div className=' col-12 col-lg-10'>
-                        <div className='d-flex justify-content-between '>
-
-                            <div>
-                                <h6 className=' fs-5 fw-bold'>Wade warren</h6>
-                            </div>
-
-                            <div className='text-secondary'>
-                                11:23 pm
-
-                            </div>
-                        </div>
-
-                        <p style={{ fontSize: "14px" }} className=" text-secondary">
-                            Lorem ipsum dolor sit amet
-                        </p>
-                    </div>
-
-                </div>
-
-                <div className='border-bottom border-1  py-2 d-flex gap-2 flex-wrap' >
-
-                    <div className=' col-2 col-lg-1  text-center'>
-                        <img src="../image/available2.png" alt="" width={60} />
-                    </div>
-
-                    <div className=' col-12 col-lg-10'>
-                        <div className='d-flex justify-content-between '>
-
-                            <div>
-                                <h6 className=' fs-5 fw-bold'>Wade warren</h6>
-                            </div>
-
-                            <div className='text-secondary'>
-                                11:23 pm
-
-                            </div>
-                        </div>
-
-                        <p style={{ fontSize: "14px" }} className=" text-secondary">
-                            Lorem ipsum dolor sit amet
-                        </p>
-                    </div>
-
-                </div>
-
-                <div className='border-bottom border-1  py-2 d-flex gap-2 flex-wrap' >
-
-                    <div className=' col-2 col-lg-1  text-center'>
-                        <img src="../image/available2.png" alt="" width={60} />
-                    </div>
-
-                    <div className=' col-12 col-lg-10'>
-                        <div className='d-flex justify-content-between '>
-
-                            <div>
-                                <h6 className=' fs-5 fw-bold'>Wade warren</h6>
-                            </div>
-
-                            <div className='text-secondary'>
-                                11:23 pm
-
-                            </div>
-                        </div>
-
-                        <p style={{ fontSize: "14px" }} className=" text-secondary">
-                            Lorem ipsum dolor sit amet
-                        </p>
-                    </div>
-
-                </div>
-
-                <div className='border-bottom border-1  py-2 d-flex gap-2 flex-wrap' >
-
-                    <div className=' col-2 col-lg-1  text-center'>
-                        <img src="../image/available2.png" alt="" width={60} />
-                    </div>
-
-                    <div className=' col-12 col-lg-10'>
-                        <div className='d-flex justify-content-between '>
-
-                            <div>
-                                <h6 className=' fs-5 fw-bold'>Wade warren</h6>
-                            </div>
-
-                            <div className='text-secondary'>
-                                11:23 pm
-
-                            </div>
-                        </div>
-
-                        <p style={{ fontSize: "14px" }} className=" text-secondary">
-                            Lorem ipsum dolor sit amet
-                        </p>
-                    </div>
-
-                </div>
-
-                <div className='border-bottom border-1  py-2 d-flex gap-2 flex-wrap' >
-
-                    <div className=' col-2 col-lg-1  text-center'>
-                        <img src="../image/available2.png" alt="" width={60} />
-                    </div>
-
-                    <div className=' col-12 col-lg-10'>
-                        <div className='d-flex justify-content-between '>
-
-                            <div>
-                                <h6 className=' fs-5 fw-bold'>Wade warren</h6>
-                            </div>
-
-                            <div className='text-secondary'>
-                                11:23 pm
-
-                            </div>
-                        </div>
-
-                        <p style={{ fontSize: "14px" }} className=" text-secondary">
-                            Lorem ipsum dolor sit amet
-                        </p>
-                    </div>
-
-                </div>
-
-                <div className='border-bottom border-1  py-2 d-flex gap-2 flex-wrap' >
-
-                    <div className=' col-2 col-lg-1  text-center'>
-                        <img src="../image/available2.png" alt="" width={60} />
-                    </div>
-
-                    <div className=' col-12 col-lg-10'>
-                        <div className='d-flex justify-content-between '>
-
-                            <div>
-                                <h6 className=' fs-5 fw-bold'>Wade warren</h6>
-                            </div>
-
-                            <div className='text-secondary'>
-                                11:23 pm
-
-                            </div>
-                        </div>
-
-                        <p style={{ fontSize: "14px" }} className=" text-secondary">
-                            Lorem ipsum dolor sit amet
-                        </p>
-                    </div>
-
-                </div>
-
-                <div className='border-bottom border-1  py-2 d-flex gap-2 flex-wrap' >
-
-                    <div className=' col-2 col-lg-1  text-center'>
-                        <img src="../image/available2.png" alt="" width={60} />
-                    </div>
-
-                    <div className=' col-12 col-lg-10'>
-                        <div className='d-flex justify-content-between '>
-
-                            <div>
-                                <h6 className=' fs-5 fw-bold'>Wade warren</h6>
-                            </div>
-
-                            <div className='text-secondary'>
-                                11:23 pm
-
-                            </div>
-                        </div>
-
-                        <p style={{ fontSize: "14px" }} className=" text-secondary">
-                            Lorem ipsum dolor sit amet
-                        </p>
-                    </div>
-
-                </div>
-
-                <div className='border-bottom border-1  py-2 d-flex gap-2 flex-wrap' >
-
-                    <div className=' col-2 col-lg-1  text-center'>
-                        <img src="../image/available2.png" alt="" width={60} />
-                    </div>
-
-                    <div className=' col-12 col-lg-10'>
-                        <div className='d-flex justify-content-between '>
-
-                            <div>
-                                <h6 className=' fs-5 fw-bold'>Wade warren</h6>
-                            </div>
-
-                            <div className='text-secondary'>
-                                11:23 pm
-
-                            </div>
-                        </div>
-
-                        <p style={{ fontSize: "14px" }} className=" text-secondary">
-                            Lorem ipsum dolor sit amet
-                        </p>
-                    </div>
-
-                </div>
-
-                <div className='border-bottom border-1  py-2 d-flex gap-2 flex-wrap' >
-
-                    <div className=' col-2 col-lg-1  text-center'>
-                        <img src="../image/available2.png" alt="" width={60} />
-                    </div>
-
-                    <div className=' col-12 col-lg-10'>
-                        <div className='d-flex justify-content-between '>
-
-                            <div>
-                                <h6 className=' fs-5 fw-bold'>Wade warren</h6>
-                            </div>
-
-                            <div className='text-secondary'>
-                                11:23 pm
-
-                            </div>
-                        </div>
-
-                        <p style={{ fontSize: "14px" }} className=" text-secondary">
-                            Lorem ipsum dolor sit amet
-                        </p>
-                    </div>
-
-                </div>
-
-                <div className='border-bottom border-1  py-2 d-flex gap-2 flex-wrap' >
-
-                    <div className=' col-2 col-lg-1  text-center'>
-                        <img src="../image/available2.png" alt="" width={60} />
-                    </div>
-
-                    <div className=' col-12 col-lg-10'>
-                        <div className='d-flex justify-content-between '>
-
-                            <div>
-                                <h6 className=' fs-5 fw-bold'>Wade warren</h6>
-                            </div>
-
-                            <div className='text-secondary'>
-                                11:23 pm
-
-                            </div>
-                        </div>
-
-                        <p style={{ fontSize: "14px" }} className=" text-secondary">
-                            Lorem ipsum dolor sit amet
-                        </p>
-                    </div>
-
-                </div>
-
-
+                    ))
+                }
 
             </div>
         </div>
-
     </>)
 }
 

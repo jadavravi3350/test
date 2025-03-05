@@ -1,22 +1,40 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { content } from './App';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { Link } from '@mui/material';
 
 function LegalAdvice() {
 
-    const { Arr } = useContext(content);
+    // const { Arr } = useContext(content);
 
     const ref1 = useRef();
     const [dataobj, setdataobj] = useState();
-    const [message, setmessage] = useState()
+    // const [message, setmessage] = useState()
     const [messageARR, setmessageARR] = useState([]);
     const [date, setdate] = useState(new Date());
     const refMessage = useRef();
     const navi = useNavigate();
 
+    const [lawyer, setLawyer] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+
 
     useEffect(() => {
-        ref1.current.style.display = "none";
+
+        axios.get("https://lawyer-management-system-api.onrender.com/lawyer/admin-lawyer")
+            .then((response) => {
+                setLawyer(response.data);
+                setLoading(false);
+            })
+            .catch((error) => {
+                setError(error.message);
+                setLoading(false);
+            });
+
+        // ref1.current.style.display = "none";
 
         const time = setInterval(() => {
 
@@ -27,48 +45,59 @@ function LegalAdvice() {
 
     }, [])
 
+    if (loading) return <div className='text-center my-5'>
+        <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+    if (error) return <p>Error: {error}</p>
+
+    // function handlemesge(id) {
+    //     if (ref1.current.style.display == "none") {
+    //         ref1.current.style.display = "block"
+    //     }
+
+
+    //     const obj = Arr.find((v) => {
+    //         return v.id == id
+    //     })
+
+    //     setdataobj(obj)
+
+    // }
+
+    // const handleclose = () => {
+    //     if (ref1) {
+    //         // ref1.current.style.display = "none"
+    //     }
+    // }
+
     function handlemesge(id) {
-        if (ref1.current.style.display == "none") {
-            ref1.current.style.display = "block"
-        }
 
+        navi("/Message/" + id);
 
-        const obj = Arr.find((v) => {
-            return v.id == id
-        })
+        // if (!message) {
+        //     return;
+        // }
 
-        setdataobj(obj)
+        // else {
+        //     setmessageARR([...messageARR, { name: message, data: date.toLocaleTimeString() }])
+        // }
 
+        // setmessage("")
+
+        // if (refMessage.current) {
+        //     refMessage.current.scrollTop = refMessage.current.scrollHeight;
+        // }
     }
-
-    const handleclose = () => {
-        ref1.current.style.display = "none"
-    }
-
-
-
-    function handleMesge() {
-
-        if (!message) {
-            return;
-        }
-
-        else {
-            setmessageARR([...messageARR, { name: message, data: date.toLocaleTimeString() }])
-        }
-
-        setmessage("")
-
-        if (refMessage.current) {
-            refMessage.current.scrollTop = refMessage.current.scrollHeight;
-        }
-    }
-
 
     const handleView = (id) => {
         navi("/JacobAbout/" + id)
     }
 
+    const handleVideo = () => {
+        navi("/VideoCall")
+    }
 
 
     return (
@@ -97,15 +126,22 @@ function LegalAdvice() {
 
                     <div className=' LegalAdvice2 my-4 position-relative'>
                         {
-                            Arr.map((v) => (
-                                <div key={v.id} className='LegalAdvice2child p-3 border rounded-3'>
+                            lawyer.map((v) => (
+                                <div key={v._id} className='LegalAdvice2child p-3 border rounded-3'>
 
                                     <div className='d-flex gap-2'>
-                                        <img className=' img-fluid' src={v.url} alt="" width={75}  />
+                                        <div style={{ width: '75px', height: '75px', overflow: 'hidden' }}>
+                                            <img
+                                                className="img-fluid"
+                                                src={v.image}
+                                                alt="images"
+                                                style={{ borderRadius: "50%", width: '100%', height: '100%', objectFit: 'cover' }}
+                                            />
+                                        </div>
 
                                         <div>
 
-                                            <h6 className='fw-bold my-0'>{v.name}</h6>
+                                            <h6 className='fw-bold my-0'>{v.fullName}</h6>
 
                                             <div className='py-0'>
                                                 <img width={75} src="../image/section5start.png" alt="" />
@@ -113,7 +149,7 @@ function LegalAdvice() {
                                                 <b className='ms-2'>(233 Reviews)</b>
                                             </div>
 
-                                            <p style={{ color: "#0672bf",fontSize:"16px" }}><span className='text-info fw-bold'>$ {v.price}</span> <span style={{ color: "rgb(177, 174, 174)" }}>/ per hour</span></p>
+                                            <p style={{ color: "#0672bf", fontSize: "16px" }}><span className='text-info fw-bold'>$ {v.rate}</span> <span style={{ color: "rgb(177, 174, 174)" }}>/ per hour</span></p>
 
                                         </div>
                                     </div>
@@ -121,17 +157,18 @@ function LegalAdvice() {
                                     <p className='fw-bolder mt-2' style={{ fontSize: "13px", color: "rgb(177, 174, 174)" }}>There are many variations of passages of Lorem Ipsum available, but the majority....</p>
 
                                     <div className="d-flex gap-2">
-                                        <button style={{ background: "rgba(135, 206, 250, 0.204)", fontSize: "12px" }} className="btn col btn-lg text-primary fw-bold" type="button" onClick={() => { handleView(v.id) }}>View Details</button>
-                                        <button className="btn btn-lg col fw-bold text-white" type="button" style={{ fontSize: "12px",background:"#006ebd" }}>Book Video Call</button>
+                                        <button style={{ background: "rgba(135, 206, 250, 0.204)", fontSize: "12px" }} className="btn col btn-lg text-primary fw-bold" type="button" onClick={() => { handleView(v._id) }}>View Details</button>
+                                        <button onClick={handleVideo} className="btn btn-lg col fw-bold text-white" type="button" style={{ fontSize: "12px", background: "#006ebd" }}>Book Video Call</button>
+
                                     </div>
 
-                                    <i onClick={() => { handlemesge(v.id) }} class="ri-chat-3-line position-absolute top-0 end-0 m-3 fs-4" style={{ color: "#0672bf" }}></i>
+                                    <i onClick={() => { handlemesge(v._id) }} class="ri-chat-3-line position-absolute top-0 end-0 m-3 fs-4" style={{ color: "#0672bf" }}></i>
 
                                 </div>
                             ))
                         }
 
-                        <div className='messagemain position-absolute' ref={ref1}>
+                        <div className='messagemain position-absolute d-none' ref={ref1}>
 
                             <div className='d-flex border p-2 justify-content-between'>
                                 <div className=''>
@@ -139,9 +176,9 @@ function LegalAdvice() {
                                     <b className='fs-6 mx-3'>{dataobj && dataobj.name}</b>
                                 </div>
 
-                                <button className='border' onClick={handleclose}>
+                                {/* <button className='border' onClick={handleclose}>
                                     X
-                                </button>
+                                </button> */}
                             </div>
 
                             <div className='messageChild px-1 p-4' ref={refMessage}>
@@ -156,12 +193,12 @@ function LegalAdvice() {
 
                             </div>
 
-                            <div className='messageChild2 p-3 d-flex'>
+                            {/* <div className='messageChild2 p-3 d-flex'>
 
                                 <input className='form-control' type="text" value={message} onChange={(e) => { setmessage(e.target.value) }} />
                                 <button className='btn btn-primary btn-sm mx-1' onClick={handleMesge}>send</button>
 
-                            </div>
+                            </div> */}
 
                         </div>
 

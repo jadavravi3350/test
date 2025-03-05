@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react'
 import Navbar from './Navbar';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
 import Home from './Home';
 import './App.css'
 import Footer from './Footer';
@@ -24,6 +24,12 @@ import Jobpost from './Jobpost';
 import LawyerLogin from './LawyerLogin';
 import LawForgotPassword from './LawForgotPassword';
 import axios from 'axios';
+import ChatApp from './P1';
+import P1 from './P1';
+import Complaint from './Complaint';
+import  Message  from './Message';
+import VideoCall from './VideoCall';
+import MessageLaw from './MessageLaw';
 
 export const content = createContext();
 
@@ -126,14 +132,25 @@ const Arr = [
 
 function App() {
 
+    // useEffect(()=>{
+    //     axios.get("https://lawyer-management-system-api.onrender.com/lawyer/dashboard")
+    //     .then((res)=>{
+    //         console.log(res)
+    //     })
+    // },[])
+
+
+
     return (
-        <div>
-
+        <div> 
+      
+      
             <content.Provider value={{ Arr }}>
+                
                 <BrowserRouter>
-
+               
                     <Routes>
-                        <Route path='/' element={<><Home /> <Footer /> </>}></Route>
+                        <Route path='/' element={<> <Home /> <Footer /> </>}></Route>
                         <Route path='/NearMe' element={<><Navbar></Navbar> <NearMe /> <Footer /> </>}></Route>
                         <Route path='/Login' element={<> <Login /> </>}></Route>
                         <Route path='/Regi' element={<> <Registration /> </>}></Route>
@@ -157,6 +174,14 @@ function App() {
                         <Route path='/EditProfileLaw/*' element={<> <Navbar></Navbar> <EditProfileLaw /> <Footer></Footer></>}></Route>
                         <Route path='/Jobpost' element={<> <Navbar></Navbar> <Jobpost /> <Footer></Footer></>}></Route>
                         <Route path='/LawForgotPassword' element={<>  <LawForgotPassword /> </>}></Route>
+                        <Route path='/Complaint' element={<><Navbar />  <Complaint /> <Footer /> </>}></Route>
+                        <Route path='/Message/:id' element={<><Navbar />  <Message /> <Footer /> </>}></Route>
+
+                        <Route path='/VideoCall' element={<><Navbar />  < VideoCall/> <Footer /> </>}></Route>
+                        <Route path='/MessageLaw/:id' element={<><Navbar />  < MessageLaw/> <Footer /> </>}></Route>
+
+
+
 
                     </Routes>
 

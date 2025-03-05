@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, Route, Routes } from 'react-router-dom'
 import Rating from '@mui/material/Rating';
 import Box from '@mui/material/Box';
 import StarIcon from '@mui/icons-material/Star';
+import axios from 'axios';
 
 
 function getLabelText(value) {
@@ -15,9 +16,36 @@ const Array = [1]
 function Dashboard() {
 
   const [color, setcolor] = useState({ background: "#006ebd", color: "white", badgecolor: "#006ebd", badgebackground: "white" });
+  
+  const [bookings, setBookings] = useState([]);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+     
+              const Lawyertoken = JSON.parse(localStorage.getItem("Lawyertoken"));
+
+
+             axios.get(
+                  "https://lawyer-management-system-api.onrender.com/lawyer/dashboard",
+                  {
+                      headers: {
+                          "Authorization": `Bearer ${Lawyertoken.token}`, // Add Authorization token
+                          "Content-Type": "application/json",
+                      },
+                  }
+              )
+
+              .then((res)=>{
+
+                console.log(res)
+              })
+
+  }, []);
 
 
   return (
+
+    
     <div className='border-bottom pb-5'>
 
       <div className='DashboardMain-width'>

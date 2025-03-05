@@ -1,6 +1,37 @@
-import React from 'react'
+import axios from 'axios';
+import React, { useEffect, useState } from 'react'
 
 function Jobpost() {
+
+    const [jobs, setJobs] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    const fetchJobs = async () => {
+        try {
+            const response = await axios.get("https://lawyer-management-system-api.onrender.com/user/get-job");
+            setJobs(response.data);
+            setLoading(false);
+            localStorage.setItem("jobpost", JSON.stringify(response.data.length));
+        } catch (error) {
+            console.error("Error fetching jobs:", error);
+            setError("Failed to fetch jobs");
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchJobs();
+    }, []);
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    if (error) {
+        return <div>{error}</div>;
+    }
+
     return (
         <div>
 
@@ -125,377 +156,108 @@ function Jobpost() {
 
                         <div className='d-flex flex-wrap my-3'>
 
-                            <div className='col-12 col-lg-6 p-lg-3'>
-                                <div className=' border p-4'>
+                            {
+                                jobs && jobs.map((v) => (
+                                    <div className='col-12 col-lg-6 p-lg-3'>
+                                        <div className=' border p-4'>
 
-                                    <h6>I need someone to view my legal work like Misleading advertising and Contract disputes.</h6>
+                                            <h6>I need someone to view my legal work like Misleading advertising and Contract disputes.</h6>
 
-                                    <div className='d-flex gap-2'>
+                                            <div className='d-flex gap-2'>
 
-                                        <p style={{ fontSize: "12px", color: "grey" }}>Hourly $40-50 </p>
-                                        <h6>-</h6>
-                                        <p style={{ fontSize: "12px", color: "grey" }}> posted 4 hour ago</p>
+                                                <p style={{ fontSize: "12px", color: "grey" }}>Hourly $40-50 </p>
+                                                <h6>-</h6>
+                                                <p style={{ fontSize: "12px", color: "grey" }}> posted 4 hour ago</p>
 
-                                    </div>
+                                            </div>
 
-                                    <div className='row row-cols-2'>
+                                            <div className='row row-cols-2'>
 
-                                        <div>
+                                                <div>
 
-                                            <h6>Less than 30 hrs/week</h6>
-                                            <p style={{ fontSize: "12px", color: "grey" }}>Hours needed</p>
+                                                    <h6>Less than 30 hrs/week</h6>
+                                                    <p style={{ fontSize: "12px", color: "grey" }}>Hours needed</p>
 
-                                        </div>
+                                                </div>
 
-                                        <div>
+                                                <div>
 
-                                            <h6>Duration</h6>
-                                            <p style={{ fontSize: "12px", color: "grey" }}>2 Weeks</p>
+                                                    <h6>Duration</h6>
+                                                    <p style={{ fontSize: "12px", color: "grey" }}>2 Weeks</p>
 
-                                        </div>
+                                                </div>
 
-                                        <div>
+                                                <div>
 
-                                            <h6>Experience In</h6>
-                                            <p style={{ fontSize: "12px", color: "grey" }}>Experience In</p>
+                                                    <h6>Experience In</h6>
+                                                    <p style={{ fontSize: "12px", color: "grey" }}>{v.expirence}</p>
 
-                                        </div>
+                                                </div>
 
-                                        <div>
+                                                <div>
 
-                                            <h6>Location</h6>
-                                            <p style={{ fontSize: "12px", color: "grey" }}>Dallas, TX</p>
+                                                    <h6>Location</h6>
+                                                    <p style={{ fontSize: "12px", color: "grey" }}>Dallas, TX</p>
 
-                                        </div>
+                                                </div>
 
-                                    </div>
+                                            </div>
 
-                                    <div className=" text-secondary">
+                                            <div className="text-secondary">
+                                                We need someone with larger-scale legal experience.
 
-                                        We need some one with larger scale legal
+                                                {/* Dynamic collapse ID */}
+                                                <span className="collapse" id={`collapseExample-${v._id}`}>
+                                                    {v.aboutYou}
+                                                </span>
 
-                                        <span class="collapse" id="collapseExample">
+                                                {/* Toggle Collapse */}
+                                                <a
+                                                    style={{ color: "#006ebd" }}
+                                                    className="text-decoration-none fw-bold"
+                                                    data-bs-toggle="collapse"
+                                                    href={`#collapseExample-${v._id}`}
+                                                    role="button"
+                                                    aria-expanded="false"
+                                                    aria-controls={`collapseExample-${v._id}`}
+                                                >
+                                                    ...More
+                                                </a>
+                                            </div>
 
-                                            Some placeholder content for the collapse component. This panel is hidden by default but revealed when the user activates the relevant trigger.
+                                            <div className='d-flex align-items-center gap-2 my-3'>
+                                                <img width={20} height={20} src="../image/payment3.png" alt="" />
+                                                <h6>  payment Verified</h6>
+                                            </div>
 
-                                        </span>
+                                            <div className="d-flex align-items-center gap-3">
 
-                                        <a style={{ color: "#006ebd" }} class=" text-decoration-none fw-bold" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-                                            ...More
-                                        </a>
+                                                <h6>Posted</h6>
+                                                <img width={"25px"} height={"25px"} className="" src="../image/booking3.png" alt="" />
+                                                <h6 className=' fw-bold'>Eleanor Pera</h6>
 
-                                    </div>
+                                            </div>
 
-                                    <div className='d-flex align-items-center gap-2 my-3'>
-                                        <img width={20} height={20} src="../image/payment3.png" alt="" />
-                                        <h6>  payment Verified</h6>
-                                    </div>
+                                            <div className='d-flex flex-wrap mt-2'>
 
-                                    <div className="d-flex align-items-center gap-3">
+                                                <div className='col-12 col-lg-6'>
 
-                                        <h6>Posted</h6>
-                                        <img width={"25px"} height={"25px"} className="" src="../image/booking3.png" alt="" />
-                                        <h6 className=' fw-bold'>Eleanor Pera</h6>
+                                                    <button className='btn col-12 col-lg-11' style={{ background: "#e0f2ff", color: "#006ebd" }}>Message</button>
 
-                                    </div>
+                                                </div>
 
-                                    <div className='d-flex flex-wrap mt-2'>
+                                                <div className='col-12 col-lg-6 text-end'>
 
-                                        <div className='col-12 col-lg-6'>
+                                                    <button className='btn col-12 col-lg-11' style={{ background: "#006ebd", color: "#fff" }}>Accept Proposal</button>
 
-                                            <button className='btn col-12 col-lg-11' style={{ background: "#e0f2ff", color: "#006ebd" }}>Message</button>
+                                                </div>
 
-                                        </div>
-
-                                        <div className='col-12 col-lg-6 text-end'>
-
-                                            <button className='btn col-12 col-lg-11' style={{ background: "#006ebd", color: "#fff" }}>Accept Proposal</button>
-
-                                        </div>
-
-                                    </div>
-
-                                </div>
-                            </div>
-
-                            <div className='col-12 col-lg-6 p-lg-3'>
-                                <div className=' border p-4'>
-
-                                    <h6>I need someone to view my legal work like Misleading advertising and Contract disputes.</h6>
-
-                                    <div className='d-flex gap-2'>
-
-                                        <p style={{ fontSize: "12px", color: "grey" }}>Hourly $40-50 </p>
-                                        <h6>-</h6>
-                                        <p style={{ fontSize: "12px", color: "grey" }}> posted 4 hour ago</p>
-
-                                    </div>
-
-                                    <div className='row row-cols-2'>
-
-                                        <div>
-
-                                            <h6>Less than 30 hrs/week</h6>
-                                            <p style={{ fontSize: "12px", color: "grey" }}>Hours needed</p>
+                                            </div>
 
                                         </div>
-
-                                        <div>
-
-                                            <h6>Duration</h6>
-                                            <p style={{ fontSize: "12px", color: "grey" }}>2 Weeks</p>
-
-                                        </div>
-
-                                        <div>
-
-                                            <h6>Experience In</h6>
-                                            <p style={{ fontSize: "12px", color: "grey" }}>Experience In</p>
-
-                                        </div>
-
-                                        <div>
-
-                                            <h6>Location</h6>
-                                            <p style={{ fontSize: "12px", color: "grey" }}>Dallas, TX</p>
-
-                                        </div>
-
                                     </div>
-
-                                    <div className=" text-secondary">
-
-                                        We need some one with larger scale legal
-
-                                        <span class="collapse" id="collapseExample">
-
-                                            Some placeholder content for the collapse component. This panel is hidden by default but revealed when the user activates the relevant trigger.
-
-                                        </span>
-
-                                        <a style={{ color: "#006ebd" }} class=" text-decoration-none fw-bold" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-                                            ...More
-                                        </a>
-
-                                    </div>
-
-                                    <div className='d-flex align-items-center gap-2 my-3'>
-                                        <img width={20} height={20} src="../image/payment3.png" alt="" />
-                                        <h6>  payment Verified</h6>
-                                    </div>
-
-                                    <div className="d-flex align-items-center gap-3">
-
-                                        <h6>Posted</h6>
-                                        <img width={"25px"} height={"25px"} className="" src="../image/booking3.png" alt="" />
-                                        <h6 className=' fw-bold'>Eleanor Pera</h6>
-
-                                    </div>
-
-                                    <div className='d-flex flex-wrap mt-2'>
-
-                                        <div className='col-12 col-lg-6'>
-
-                                            <button className='btn col-12 col-lg-11' style={{ background: "#e0f2ff", color: "#006ebd" }}>Message</button>
-
-                                        </div>
-
-                                        <div className='col-12 col-lg-6 text-end'>
-
-                                            <button className='btn col-12 col-lg-11' style={{ background: "#006ebd", color: "#fff" }}>Accept Proposal</button>
-
-                                        </div>
-
-                                    </div>
-
-                                </div>
-                            </div>
-
-                            <div className='col-12 col-lg-6 p-lg-3'>
-                                <div className=' border p-4'>
-
-                                    <h6>I need someone to view my legal work like Misleading advertising and Contract disputes.</h6>
-
-                                    <div className='d-flex gap-2'>
-
-                                        <p style={{ fontSize: "12px", color: "grey" }}>Hourly $40-50 </p>
-                                        <h6>-</h6>
-                                        <p style={{ fontSize: "12px", color: "grey" }}> posted 4 hour ago</p>
-
-                                    </div>
-
-                                    <div className='row row-cols-2'>
-
-                                        <div>
-
-                                            <h6>Less than 30 hrs/week</h6>
-                                            <p style={{ fontSize: "12px", color: "grey" }}>Hours needed</p>
-
-                                        </div>
-
-                                        <div>
-
-                                            <h6>Duration</h6>
-                                            <p style={{ fontSize: "12px", color: "grey" }}>2 Weeks</p>
-
-                                        </div>
-
-                                        <div>
-
-                                            <h6>Experience In</h6>
-                                            <p style={{ fontSize: "12px", color: "grey" }}>Experience In</p>
-
-                                        </div>
-
-                                        <div>
-
-                                            <h6>Location</h6>
-                                            <p style={{ fontSize: "12px", color: "grey" }}>Dallas, TX</p>
-
-                                        </div>
-
-                                    </div>
-
-                                    <div className=" text-secondary">
-
-                                        We need some one with larger scale legal
-
-                                        <span class="collapse" id="collapseExample">
-
-                                            Some placeholder content for the collapse component. This panel is hidden by default but revealed when the user activates the relevant trigger.
-
-                                        </span>
-
-                                        <a style={{ color: "#006ebd" }} class=" text-decoration-none fw-bold" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-                                            ...More
-                                        </a>
-
-                                    </div>
-
-                                    <div className='d-flex align-items-center gap-2 my-3'>
-                                        <img width={20} height={20} src="../image/payment3.png" alt="" />
-                                        <h6>  payment Verified</h6>
-                                    </div>
-
-                                    <div className="d-flex align-items-center gap-3">
-
-                                        <h6>Posted</h6>
-                                        <img width={"25px"} height={"25px"} className="" src="../image/booking3.png" alt="" />
-                                        <h6 className=' fw-bold'>Eleanor Pera</h6>
-
-                                    </div>
-
-                                    <div className='d-flex flex-wrap mt-2'>
-
-                                        <div className='col-12 col-lg-6'>
-
-                                            <button className='btn col-12 col-lg-11' style={{ background: "#e0f2ff", color: "#006ebd" }}>Message</button>
-
-                                        </div>
-
-                                        <div className='col-12 col-lg-6 text-end'>
-
-                                            <button className='btn col-12 col-lg-11' style={{ background: "#006ebd", color: "#fff" }}>Accept Proposal</button>
-
-                                        </div>
-
-                                    </div>
-
-                                </div>
-                            </div>
-
-                            <div className='col-12 col-lg-6 p-lg-3'>
-                                <div className=' border p-4'>
-
-                                    <h6>I need someone to view my legal work like Misleading advertising and Contract disputes.</h6>
-
-                                    <div className='d-flex gap-2'>
-
-                                        <p style={{ fontSize: "12px", color: "grey" }}>Hourly $40-50 </p>
-                                        <h6>-</h6>
-                                        <p style={{ fontSize: "12px", color: "grey" }}> posted 4 hour ago</p>
-
-                                    </div>
-
-                                    <div className='row row-cols-2'>
-
-                                        <div>
-
-                                            <h6>Less than 30 hrs/week</h6>
-                                            <p style={{ fontSize: "12px", color: "grey" }}>Hours needed</p>
-
-                                        </div>
-
-                                        <div>
-
-                                            <h6>Duration</h6>
-                                            <p style={{ fontSize: "12px", color: "grey" }}>2 Weeks</p>
-
-                                        </div>
-
-                                        <div>
-
-                                            <h6>Experience In</h6>
-                                            <p style={{ fontSize: "12px", color: "grey" }}>Experience In</p>
-
-                                        </div>
-
-                                        <div>
-
-                                            <h6>Location</h6>
-                                            <p style={{ fontSize: "12px", color: "grey" }}>Dallas, TX</p>
-
-                                        </div>
-
-                                    </div>
-
-                                    <div className=" text-secondary">
-
-                                        We need some one with larger scale legal
-
-                                        <span class="collapse" id="collapseExample">
-
-                                            Some placeholder content for the collapse component. This panel is hidden by default but revealed when the user activates the relevant trigger.
-
-                                        </span>
-
-                                        <a style={{ color: "#006ebd" }} class=" text-decoration-none fw-bold" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-                                            ...More
-                                        </a>
-
-                                    </div>
-
-                                    <div className='d-flex align-items-center gap-2 my-3'>
-                                        <img width={20} height={20} src="../image/payment3.png" alt="" />
-                                        <h6>  payment Verified</h6>
-                                    </div>
-
-                                    <div className="d-flex align-items-center gap-3">
-
-                                        <h6>Posted</h6>
-                                        <img width={"25px"} height={"25px"} className="" src="../image/booking3.png" alt="" />
-                                        <h6 className=' fw-bold'>Eleanor Pera</h6>
-
-                                    </div>
-
-                                    <div className='d-flex flex-wrap mt-2'>
-
-                                        <div className='col-12 col-lg-6'>
-
-                                            <button className='btn col-12 col-lg-11' style={{ background: "#e0f2ff", color: "#006ebd" }}>Message</button>
-
-                                        </div>
-
-                                        <div className='col-12 col-lg-6 text-end'>
-
-                                            <button className='btn col-12 col-lg-11' style={{ background: "#006ebd", color: "#fff" }}>Accept Proposal</button>
-
-                                        </div>
-
-                                    </div>
-
-                                </div>
-                            </div>
+                                ))
+                            }
 
 
                         </div>

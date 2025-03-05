@@ -46,6 +46,7 @@ function Footer() {
                                 <p>Support Lorem Ipsum</p>
                                 <p>Lorem Ipsum</p>
                                 <p>Careers</p>
+                                <p><Link to={"/Complaint"} className=' text-decoration-none text-dark'>Complaint</Link></p>
 
                             </div>
 

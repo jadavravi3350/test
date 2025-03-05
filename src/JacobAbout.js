@@ -3,30 +3,181 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { content } from './App';
 import { Calendar } from 'primereact/calendar';
 import "primereact/resources/themes/lara-light-cyan/theme.css";
+import Rating from '@mui/material/Rating';
+import axios from 'axios';
 
 function JacobAbout() {
+
+    const token = JSON.parse(localStorage.getItem("Usertoken"));
+    const Lawyertoken = JSON.parse(localStorage.getItem("Lawyertoken"));
+
     const { id } = useParams();
-    const { Arr } = useContext(content);
+
+    // const { Arr } = useContext(content);
     const [star, setstar] = useState(0);
     const [star2, setstar2] = useState(0);
     const [date, setDate] = useState(null);
     const navi = useNavigate();
 
-    const obj = Arr.find((v) => {
-        return v.id == id
+    const [lawyer, setLawyer] = useState([]);
+    const [timeId, settimeId] = useState([]);
+
+    const [ratings, setRatings] = useState([]);
+    const [ratingsAll, setRatingsAll] = useState({});
+
+    const [ratingsRange, setratingsRange] = useState([5, 4, 3, 2, 1]);
+
+    const [getpayments, setgetpayments] = useState([]);
+    const [payment, setpayment] = useState();
+
+
+    const [showAll, setShowAll] = useState(false);
+
+    const visibleRatings = showAll ? ratings : ratings.slice(0, 2);
+
+
+    const obj = lawyer.find((v) => {
+        return v._id == id
     })
 
-    const handlepayment = () => {
+    // console.log(ratings[0].ratting)
 
-        if (false) {
-            navi("/PaymentSuccessfully")
+
+    const postTimeSlot = async () => {
+
+        try {
+
+            const response = await axios.post(
+                "https://lawyer-management-system-api.onrender.com/lawyer/post-time",
+                { date },
+                { headers: { Authorization: `Bearer ${token.token}` } }
+            );
+            // alert("Time slot posted successfully!");
+            settimeId(response.data._id)
+        } catch (error) {
+            console.error("Failed to post time slot", error);
+            alert("Time slot no!")
         }
 
-        else {
-            navi("/PaymentFailed")
+    };
+
+    const bookNow = async () => {
+
+        try {
+            const data = { lawyer: id, timeSlot: timeId }
+
+            console.log(data)
+            await axios.post(
+                "https://lawyer-management-system-api.onrender.com/booking/post-booking",
+                data,
+                { headers: { Authorization: `Bearer ${token.token}` } }
+            );
+            // alert("Appointment booked successfully!");
+        } catch (error) {
+            console.error("Failed to book appointment", error);
+        }
+    };
+
+    const getrating = async () => {
+
+        try {
+
+            const response1 = await axios.get(`https://lawyer-management-system-api.onrender.com/lawyer/get-all-ratting/${id}`, {
+                // headers: { Authorization: `Bearer ${Lawyertoken.token}` }
+            })
+
+            setRatings(response1.data)
+
+            const response2 = await axios.get(`https://lawyer-management-system-api.onrender.com/lawyer/get-ratting/${id}`, {
+                // headers: { Authorization: `Bearer ${Lawyertoken.token}` }
+            })
+
+            setRatingsAll(response2.data)
+
+            //             averageRatting
+            // : 
+            // 4.333333333333333
+            // countRatting
+            // : 
+            // 3
+
+        }
+
+        catch (error) {
+            console.log(error)
         }
 
     }
+
+
+
+    const getpayment = async () => {
+
+        try {
+
+            const response1 = await axios.get(`https://lawyer-management-system-api.onrender.com/payment/get-paymentDetails`, {
+                headers: { Authorization: `Bearer ${token.token}` }
+            })
+
+            const obj = response1.data.find((v) => {
+                return v.lawyer._id == id
+            })
+
+            setgetpayments(obj)
+
+
+        }
+
+        catch (error) {
+            console.log(error)
+        }
+
+    }
+
+
+    const handlepayment = async () => {
+
+        try {
+            const data = { paymentId: getpayments._id }
+            const response1 = await axios.post(`https://lawyer-management-system-api.onrender.com/payment/razorpay`,
+                data,
+                { headers: { Authorization: `Bearer ${token.token}` } })
+
+            console.log(response1)
+        }
+
+        catch (error) {
+            console.log(error)
+        }
+
+    }
+
+
+    useEffect(() => {
+        axios.get("https://lawyer-management-system-api.onrender.com/lawyer/admin-lawyer")
+            .then((response) => {
+                setLawyer(response.data);
+            })
+            .catch((error) => {
+                console.error(error.message);
+            });
+
+        getpayment();
+        getrating();
+    }, [])
+
+
+    // const handlepayment = () => {
+
+    //     if (false) {
+    //         navi("/PaymentSuccessfully")
+    //     }
+
+    //     else {
+    //         navi("/PaymentFailed")
+    //     }
+
+    // }
 
 
     return (
@@ -41,9 +192,15 @@ function JacobAbout() {
                         <div className='col-12 col-lg-3 p-lg-3  text-center'>
 
                             <div className='border py-4'>
-                                <img src={obj.url} alt="fasdfasdf" height={120} width={120} />
+                                {/* <img className="object-fit-cover" src={obj && obj.image} alt="fasdfasdf" style={{ widht: "10px", height: "100%" }} /> */}
+                                <img
+                                    className=" object-fit-cover"
+                                    src={obj?.image}
+                                    alt="fasdfasdf"
+                                    style={{ width: "120px", height: "120px", borderRadius: "50%" }}
+                                />
 
-                                <h5 className='mt-3 mb-0 fs-bold'>{obj.name}</h5>
+                                <h5 className='mt-3 mb-0 fs-bold'>{obj && obj.fullName}</h5>
 
                                 <div className=''>
                                     <img width={70} src="../image/booking5.png" alt="" />
@@ -51,7 +208,7 @@ function JacobAbout() {
                                 </div>
 
 
-                                <h6 className='text-info my-3 fs-5 fw-bold'>$ {obj.price} / <span className='text-dark'> per hour</span></h6>
+                                <h6 className='text-info my-3 fs-5 fw-bold'>$ {obj && obj.rate} / <span className='text-dark'> per hour</span></h6>
 
                                 <button className='btn rounded mt-2 px-5 text-white btn-lg' style={{ fontSize: "13px", background: "#006ebd" }}>Send Message</button>
                             </div>
@@ -82,15 +239,21 @@ function JacobAbout() {
 
                             <div>
 
-                                <button style={{ fontSize: "16px", padding: "7px 13px" }} className='btn btn-outline-dark m-2 btn-sm'>Lorem Ipsum</button>
-                                <button style={{ fontSize: "16px", padding: "7px 13px" }} className='btn btn-outline-dark m-2 btn-sm'>Accident</button>
+                                {
+                                    obj && obj.skills.map((v) => (
+
+                                        <button key={v} style={{ fontSize: "16px", padding: "7px 13px" }} className='btn btn-outline-dark m-2 btn-sm'>{v}</button>
+                                    ))
+                                }
+
+                                {/* <button style={{ fontSize: "16px", padding: "7px 13px" }} className='btn btn-outline-dark m-2 btn-sm'>Accident</button>
                                 <button style={{ fontSize: "16px", padding: "7px 13px" }} className='btn btn-outline-dark m-2 btn-sm'>McClintock</button>
                                 <button style={{ fontSize: "16px", padding: "7px 13px" }} className='btn btn-outline-dark m-2 btn-sm'>Lorem Ipsum</button>
                                 <button style={{ fontSize: "16px", padding: "7px 13px" }} className='btn btn-outline-dark m-2 btn-sm'>Accident</button>
                                 <button style={{ fontSize: "16px", padding: "7px 13px" }} className='btn btn-outline-dark m-2 btn-sm'>McClintock</button>
                                 <button style={{ fontSize: "16px", padding: "7px 13px" }} className='btn btn-outline-dark m-2 btn-sm'>Characteristic</button>
                                 <button style={{ fontSize: "16px", padding: "7px 13px" }} className='btn btn-outline-dark m-2 btn-sm'>De Finibus</button>
-                                <button style={{ fontSize: "16px", padding: "7px 13px" }} className='btn btn-outline-dark m-2 btn-sm'>Malorum</button>
+                                <button style={{ fontSize: "16px", padding: "7px 13px" }} className='btn btn-outline-dark m-2 btn-sm'>Malorum</button> */}
 
                             </div>
 
@@ -114,6 +277,7 @@ function JacobAbout() {
 
                             <div className='my-3 d-flex flex-wrap gap-3 border-bottom pb-4'>
                                 <button className='btn px-lg-5 fw-bold btn-lg' style={{ fontSize: "14.5px", background: "#e0f2ff", color: "#006ebd" }} data-bs-toggle="modal" href="#exampleModalToggle" role="button">Check Availability</button>
+
                                 <button className='btn btn-lg px-lg-5 fw-bold' style={{ fontSize: "14.5px", background: "#006ebd", color: "#ffff" }}>Book Video Call</button>
                             </div>
 
@@ -124,271 +288,59 @@ function JacobAbout() {
                                 <h4 className='fw-bold'>Reviews</h4>
 
                                 <div className='d-flex justify-content-between align-items-center gap-4'>
-                                    <h4 className='' style={{ color: "#0d960b" }}>Exceptional 4.0</h4>
+                                    <h4 className='' style={{ color: "#0d960b" }}>Exceptional {parseFloat(ratingsAll.averageRatting).toFixed(1)}</h4>
 
-                                    <h5 style={{ fontSize: "15px " }} className='fw-bold'> 233 Reviews</h5>
+                                    <h5 style={{ fontSize: "15px " }} className='fw-bold'>{ratingsAll.countRatting + " Reviews"} </h5>
                                 </div>
 
                                 <div className='d-flex gap-2 mt-2'>
-                                    <i onClick={() => { }} style={{ fontSize: "15px" }} className="fa-solid fa-star text-warning"></i>
-                                    <i onClick={() => { }} style={{ fontSize: "15px" }} className="fa-solid fa-star text-warning"></i>
-                                    <i onClick={() => { }} style={{ fontSize: "15px" }} className="fa-solid fa-star text-warning"></i>
-                                    <i onClick={() => { }} style={{ fontSize: "15px" }} className="fa-solid fa-star text-warning"></i>
-                                    <i onClick={() => { }} style={{ fontSize: "15px" }} className="fa-regular fa-star"></i>
+                                    <Rating name="read-only" value={parseFloat(ratingsAll.averageRatting).toFixed(1)} readOnly />
                                 </div>
 
-
-                                <div className='mt-3'>
-
-                                    <div className='d-flex gap-3 justify-content-between align-items-center'>
-                                        <h5 className='fw-bold'>5 <i style={{ fontSize: "12px" }} className="fa-solid fa-star text-warning"></i></h5>
-
-                                        <input className=" form-range " style={{ width: "70%" }} type="range" value={star} onChange={(e) => { setstar() }} />
-
-                                        <b>{star} %</b>
-                                    </div>
-
-                                    <div className='d-flex gap-3 justify-content-between align-items-center'>
-                                        <h5 className='fw-bold'>4 <i style={{ fontSize: "12px" }} className="fa-solid fa-star text-warning"></i></h5>
-
-                                        <input className=" form-range " style={{ width: "70%" }} type="range" value={star} onChange={(e) => { setstar() }} />
-
-
-                                        <b>{star} %</b>
-                                    </div>
-
-                                    <div className='d-flex gap-3 justify-content-between align-items-center'>
-                                        <h5 className='fw-bold'>3 <i style={{ fontSize: "12px" }} className="fa-solid fa-star text-warning"></i></h5>
-
-                                        <input className=" form-range " style={{ width: "70%" }} type="range" value={star} onChange={(e) => { setstar() }} />
-
-
-                                        <b>{star} %</b>
-                                    </div>
-
-                                    <div className='d-flex gap-3 justify-content-between align-items-center'>
-                                        <h5 className='fw-bold'>2 <i style={{ fontSize: "12px" }} className="fa-solid fa-star text-warning"></i></h5>
-
-                                        <input className=" form-range " style={{ width: "70%" }} type="range" value={star} onChange={(e) => { setstar() }} />
-
-
-                                        <b>{star} %</b>
-                                    </div>
-
-                                    <div className='d-flex gap-3 justify-content-between align-items-center'>
-                                        <h5 className='fw-bold'>1 <i style={{ fontSize: "12px" }} className="fa-solid fa-star text-warning"></i></h5>
-
-                                        <input className=" form-range " style={{ width: "70%" }} type="range" value={star2} onChange={(e) => { setstar2() }} />
-
-                                        <b>{star2} %</b>
-                                    </div>
-
-                                </div>
+                                <JacobAboutRatting></JacobAboutRatting>
 
                             </div>
                             {/*  */}
 
-
                             <div className='my-4'>
-
-                                <div className='border-bottom border-1  py-2 d-flex flex-wrap' >
-
-                                    <div className=' col-2 col-lg-1 text-center'>
-                                        <img src="../image/available2.png" alt="" width={50} />
-                                    </div>
-
-                                    <div className=' col-11'>
-                                        <div className='d-flex justify-content-between '>
-
-                                            <div>
-                                                <h6 className=' fs-5 fw-bold'>Wade warren</h6>
-                                                <p className="text-secondary fw-bold my-1 fs-6">12 Dec 2022</p>
+                                <div>
+                                    {visibleRatings.map((v, index) => (
+                                        <div key={index} className='border-bottom border-1 py-2 d-flex flex-wrap'>
+                                            <div className='col-2 col-lg-1 text-center'>
+                                                <img src="../image/available2.png" alt="" width={50} />
                                             </div>
+                                            <div className='col-11'>
+                                                <div className='d-flex justify-content-between '>
+                                                    <div>
+                                                        <h6 className='fs-5 fw-bold'>{v.user.name}</h6>
+                                                        <p className="text-secondary fw-bold my-1 fs-6">
+                                                            {new Date(v.date).toLocaleDateString("en-US", { day: "2-digit", month: "short", year: "numeric" })}
+                                                        </p>
 
-                                            <div className='d-flex gap-1'>
-                                                <i style={{ fontSize: "10px" }} className="fa-solid fa-star text-warning"></i>
-                                                <i style={{ fontSize: "10px" }} className="fa-solid fa-star text-warning"></i>
-                                                <i style={{ fontSize: "10px" }} className="fa-solid fa-star text-warning"></i>
-                                                <i style={{ fontSize: "10px" }} className="fa-solid fa-star text-warning"></i>
-                                                <i style={{ fontSize: "10px" }} className="fa-solid fa-star text-warning"></i>
+                                                    </div>
+                                                    <div className='d-flex gap-1'>
 
+                                                        <Rating name="read-only" value={v.ratting} readOnly />
+
+                                                    </div>
+                                                </div>
+                                                <p style={{ fontSize: "13px" }}>
+                                                    {v.review}
+                                                </p>
                                             </div>
                                         </div>
 
-                                        <p style={{ fontSize: "13px" }}>
-                                            Mauris venenatis, felis in dictum sagittis, elit nunc dignissim massa, eget feugiat nibh est a nibh. Aliquam eu nibh sit amet augue consectetur pretium sed sit amet leo.
-                                        </p>
-                                    </div>
-
+                                    ))}
                                 </div>
 
-                                {/*  */}
-
-
-                                <div className='border-bottom border-1  py-2 d-flex flex-wrap' >
-
-                                    <div className=' col-2 col-lg-1 text-center'>
-                                        <img src="../image/available2.png" alt="" width={50} />
-                                    </div>
-
-                                    <div className=' col-11'>
-                                        <div className='d-flex justify-content-between '>
-
-                                            <div>
-                                                <h6 className=' fs-5 fw-bold'>Wade warren</h6>
-                                                <p className="text-secondary fw-bold my-1 fs-6">12 Dec 2022</p>
-                                            </div>
-
-                                            <div className='d-flex gap-1'>
-                                                <i style={{ fontSize: "10px" }} className="fa-solid fa-star text-warning"></i>
-                                                <i style={{ fontSize: "10px" }} className="fa-solid fa-star text-warning"></i>
-                                                <i style={{ fontSize: "10px" }} className="fa-solid fa-star text-warning"></i>
-                                                <i style={{ fontSize: "10px" }} className="fa-solid fa-star text-warning"></i>
-                                                <i style={{ fontSize: "10px" }} className="fa-solid fa-star text-warning"></i>
-
-                                            </div>
-                                        </div>
-
-                                        <p style={{ fontSize: "13px" }}>
-                                            Mauris venenatis, felis in dictum sagittis, elit nunc dignissim massa, eget feugiat nibh est a nibh. Aliquam eu nibh sit amet augue consectetur pretium sed sit amet leo.
-                                        </p>
-                                    </div>
-
-                                </div>
-
-
-                                <div class="collapse" id="collapseExample">
-
-                                    <div className='border-bottom border-1  py-2 d-flex flex-wrap' >
-
-                                        <div className=' col-2 col-lg-1 text-center'>
-                                            <img src="../image/available2.png" alt="" width={50} />
-                                        </div>
-
-                                        <div className=' col-11'>
-                                            <div className='d-flex justify-content-between '>
-
-                                                <div>
-                                                    <h6 className=' fs-5 fw-bold'>Wade warren</h6>
-                                                    <p className="text-secondary fw-bold my-1 fs-6">12 Dec 2022</p>
-                                                </div>
-
-                                                <div className='d-flex gap-1'>
-                                                    <i style={{ fontSize: "10px" }} className="fa-solid fa-star text-warning"></i>
-                                                    <i style={{ fontSize: "10px" }} className="fa-solid fa-star text-warning"></i>
-                                                    <i style={{ fontSize: "10px" }} className="fa-solid fa-star text-warning"></i>
-                                                    <i style={{ fontSize: "10px" }} className="fa-solid fa-star text-warning"></i>
-                                                    <i style={{ fontSize: "10px" }} className="fa-solid fa-star text-warning"></i>
-
-                                                </div>
-                                            </div>
-
-                                            <p style={{ fontSize: "13px" }}>
-                                                Mauris venenatis, felis in dictum sagittis, elit nunc dignissim massa, eget feugiat nibh est a nibh. Aliquam eu nibh sit amet augue consectetur pretium sed sit amet leo.
-                                            </p>
-                                        </div>
-
-                                    </div>
-
-                                    <div className='border-bottom border-1  py-2 d-flex flex-wrap' >
-
-                                        <div className=' col-2 col-lg-1 text-center'>
-                                            <img src="../image/available2.png" alt="" width={50} />
-                                        </div>
-
-                                        <div className=' col-11'>
-                                            <div className='d-flex justify-content-between '>
-
-                                                <div>
-                                                    <h6 className=' fs-5 fw-bold'>Wade warren</h6>
-                                                    <p className="text-secondary fw-bold my-1 fs-6">12 Dec 2022</p>
-                                                </div>
-
-                                                <div className='d-flex gap-1'>
-                                                    <i style={{ fontSize: "10px" }} className="fa-solid fa-star text-warning"></i>
-                                                    <i style={{ fontSize: "10px" }} className="fa-solid fa-star text-warning"></i>
-                                                    <i style={{ fontSize: "10px" }} className="fa-solid fa-star text-warning"></i>
-                                                    <i style={{ fontSize: "10px" }} className="fa-solid fa-star text-warning"></i>
-                                                    <i style={{ fontSize: "10px" }} className="fa-solid fa-star text-warning"></i>
-
-                                                </div>
-                                            </div>
-
-                                            <p style={{ fontSize: "13px" }}>
-                                                Mauris venenatis, felis in dictum sagittis, elit nunc dignissim massa, eget feugiat nibh est a nibh. Aliquam eu nibh sit amet augue consectetur pretium sed sit amet leo.
-                                            </p>
-                                        </div>
-
-                                    </div>
-
-                                    <div className='border-bottom border-1  py-2 d-flex flex-wrap' >
-
-                                        <div className=' col-2 col-lg-1 text-center'>
-                                            <img src="../image/available2.png" alt="" width={50} />
-                                        </div>
-
-                                        <div className=' col-11'>
-                                            <div className='d-flex justify-content-between '>
-
-                                                <div>
-                                                    <h6 className=' fs-5 fw-bold'>Wade warren</h6>
-                                                    <p className="text-secondary fw-bold my-1 fs-6">12 Dec 2022</p>
-                                                </div>
-
-                                                <div className='d-flex gap-1'>
-                                                    <i style={{ fontSize: "10px" }} className="fa-solid fa-star text-warning"></i>
-                                                    <i style={{ fontSize: "10px" }} className="fa-solid fa-star text-warning"></i>
-                                                    <i style={{ fontSize: "10px" }} className="fa-solid fa-star text-warning"></i>
-                                                    <i style={{ fontSize: "10px" }} className="fa-solid fa-star text-warning"></i>
-                                                    <i style={{ fontSize: "10px" }} className="fa-solid fa-star text-warning"></i>
-
-                                                </div>
-                                            </div>
-
-                                            <p style={{ fontSize: "13px" }}>
-                                                Mauris venenatis, felis in dictum sagittis, elit nunc dignissim massa, eget feugiat nibh est a nibh. Aliquam eu nibh sit amet augue consectetur pretium sed sit amet leo.
-                                            </p>
-                                        </div>
-
-                                    </div>
-
-                                    <div className='border-bottom border-1  py-2 d-flex flex-wrap' >
-
-                                        <div className=' col-2 col-lg-1 text-center'>
-                                            <img src="../image/available2.png" alt="" width={50} />
-                                        </div>
-
-                                        <div className=' col-11'>
-                                            <div className='d-flex justify-content-between '>
-
-                                                <div>
-                                                    <h6 className=' fs-5 fw-bold'>Wade warren</h6>
-                                                    <p className="text-secondary fw-bold my-1 fs-6">12 Dec 2022</p>
-                                                </div>
-
-                                                <div className='d-flex gap-1'>
-                                                    <i style={{ fontSize: "10px" }} className="fa-solid fa-star text-warning"></i>
-                                                    <i style={{ fontSize: "10px" }} className="fa-solid fa-star text-warning"></i>
-                                                    <i style={{ fontSize: "10px" }} className="fa-solid fa-star text-warning"></i>
-                                                    <i style={{ fontSize: "10px" }} className="fa-solid fa-star text-warning"></i>
-                                                    <i style={{ fontSize: "10px" }} className="fa-solid fa-star text-warning"></i>
-
-                                                </div>
-                                            </div>
-
-                                            <p style={{ fontSize: "13px" }}>
-                                                Mauris venenatis, felis in dictum sagittis, elit nunc dignissim massa, eget feugiat nibh est a nibh. Aliquam eu nibh sit amet augue consectetur pretium sed sit amet leo.
-                                            </p>
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
-                                <a style={{ color: "#006ebd" }} class=" text-decoration-none fw-bold" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-                                    See All Reviews
-                                </a>
-
+                                {ratings.length > 2 && (
+                                    <b style={{ color: "#006ebd", cursor: "pointer" }}
+                                        onClick={() => setShowAll(!showAll)}
+                                        className="fs-5 mt-2"
+                                    >
+                                        {showAll ? "Show Less" : "See All Reviews"}
+                                    </b>
+                                )}
                             </div>
 
                         </div>
@@ -415,11 +367,16 @@ function JacobAbout() {
 
                             <div className='px-3'>
                                 <div className='d-flex gap-2 border align-items-center'>
-                                    <img className='object-fit-cover p-2' src={obj.url} alt="" width={100} />
+                                    <img
+                                        className=" object-fit-cover"
+                                        src={obj?.image}
+                                        alt="fasdfasdf"
+                                        style={{ width: "100px", height: "100px", borderRadius: "50%" }}
+                                    />
 
                                     <div className=''>
 
-                                        <h5 className='fw-bold mb-0'>{obj.name}</h5>
+                                        <h5 className='fw-bold mb-0'>{obj && obj.fullName}</h5>
 
                                         {/* <i className="fa-solid fa-star text-warning"></i>
                                         <i className="fa-solid fa-star text-warning"></i>
@@ -430,7 +387,7 @@ function JacobAbout() {
 
                                         <b className='ms-2'>(233 Reviews)</b>
 
-                                        <p className="fs-6"><b className='fs-6' style={{ color: "#0672bf" }}>$ {obj.price}</b> / per hour</p>
+                                        <p className="fs-6"><b className='fs-6' style={{ color: "#0672bf" }}>$ {obj && obj.rate}</b> / per hour</p>
 
                                     </div>
                                 </div>
@@ -490,7 +447,7 @@ function JacobAbout() {
 
                         </div>
                         <div class="modal-footer border-0 px-4">
-                            <button style={{ background: "#006ebd" }} class="btn text-white w-100 fs-5" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal" data-bs-dismiss="modal">Book video call</button>
+                            <button onClick={postTimeSlot} style={{ background: "#006ebd" }} class="btn text-white w-100 fs-5" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal" data-bs-dismiss="modal">Book video call</button>
                         </div>
                     </div>
                 </div>
@@ -566,7 +523,7 @@ function JacobAbout() {
 
                         </div>
                         <div class="modal-footer px-4 border-0">
-                            <button style={{ background: "#006ebd" }} class="btn text-white w-100 fs-5" data-bs-target="#exampleModalToggle3" data-bs-toggle="modal" data-bs-dismiss="modal">Book Now</button>
+                            <button onClick={bookNow} style={{ background: "#006ebd" }} class="btn text-white w-100 fs-5" data-bs-target="#exampleModalToggle3" data-bs-toggle="modal" data-bs-dismiss="modal">Book Now</button>
                         </div>
                     </div>
                 </div>
@@ -709,7 +666,9 @@ function JacobAbout() {
                         </div>
 
                         <div class="modal-footer px-4 border-0">
-                            <button style={{ background: "#006ebd" }} onClick={handlepayment} class="btn text-white w-100 fs-5" data-bs-target="#exampleModalToggle3" data-bs-toggle="modal" data-bs-dismiss="modal">Pay Now</button>
+                            <button style={{ background: "#006ebd" }} onClick={handlepayment}>Pay Now</button>
+
+                            <button style={{ background: "#006ebd" }} class="btn text-white w-100 fs-5" data-bs-target="#exampleModalToggle3" data-bs-toggle="modal" data-bs-dismiss="modal">Pay Now</button>
                         </div>
                     </div>
                 </div>
@@ -722,4 +681,72 @@ function JacobAbout() {
     )
 }
 
+function JacobAboutRatting() {
+    const { id } = useParams();
+    const [ratings, setRatings] = useState([]);
+    const [ratingsAll, setRatingsAll] = useState({});
+    const ratingsRange = [5, 4, 3, 2, 1];
+
+    const getrating = async () => {
+        try {
+            const response1 = await axios.get(`https://lawyer-management-system-api.onrender.com/lawyer/get-all-ratting/${id}`);
+            setRatings(response1.data);
+
+            const response2 = await axios.get(`https://lawyer-management-system-api.onrender.com/lawyer/get-ratting/${id}`);
+            setRatingsAll(response2.data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    useEffect(() => {
+        getrating();
+    }, []);
+
+    const calculateRatingDistribution = () => {
+        const ratingCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+
+        ratings.forEach((rating) => {
+            ratingCounts[rating.ratting] += 1;
+        });
+
+        return ratingCounts;
+    };
+
+    const ratingDistribution = calculateRatingDistribution();
+
+    return (
+        <div>
+            <div className='mt-3'>
+                {ratingsRange.map((v) => {
+                    const ratingCount = ratingDistribution[v] || 0;
+                    const ratingPercentage = (ratingCount / ratingsAll.countRatting) * 100;
+
+
+                    return (
+                        <div key={v} className="d-flex gap-3 justify-content-between align-items-center">
+                            <h5 className="fw-bold">
+                                {v} <i style={{ fontSize: "12px" }} className="fa-solid fa-star text-warning"></i>
+                            </h5>
+                            <div className="progress" style={{ width: "70%", height: "8px" }}>
+                                <div
+                                    className="progress-bar bg-success"
+                                    role="progressbar"
+                                    style={{ width: `${ratingPercentage}%`, height: "10px" }}
+                                    aria-valuenow={ratingPercentage}
+                                    aria-valuemin="0"
+                                    aria-valuemax="100"
+                                ></div>
+                            </div>
+
+                            <b>{ratingPercentage ? ratingPercentage.toFixed(1) : 0} %</b>
+                        </div>
+                    );
+                })}
+            </div>
+        </div>
+    );
+}
+
 export default JacobAbout;
+

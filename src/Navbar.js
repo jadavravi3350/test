@@ -13,7 +13,8 @@ function Navbar() {
 
   const Lawyertoken = JSON.parse(localStorage.getItem("Lawyertoken"));
   const Usertoken = JSON.parse(localStorage.getItem("Usertoken"));
-  console.log(Usertoken)
+
+  const jobpost_Total = localStorage.getItem("jobpost");
 
 
   // (Usertoken) ? alert("Usertoken123") : (Lawyertoken) ?  alert("Lawyertoken123") :  alert("Login")
@@ -82,7 +83,6 @@ function Navbar() {
 
   return (
     <div>
-
       <nav className="navbar navbar-expand-lg text-white" style={{ background: "#09193c" }}>
 
         <div className="container-fluid row ">
@@ -1410,7 +1410,7 @@ function Navbar() {
                   (Lawyertoken) ?
 
                     <>
-                      <Link to={"/Jobpost"} className='btn text-white px-4'>Job Posts <i className={"badge rounded-pill"} style={{ background: "#2ea63a" }}>2</i></Link>
+                      <Link to={"/Jobpost"} className='btn text-white px-4'>Job Posts <i className={"badge rounded-pill"} style={{ background: "#2ea63a" }}>{jobpost_Total}</i></Link>
 
                     </>
                     :
@@ -1436,15 +1436,14 @@ function Navbar() {
               {/* <Link className=' text-warning' to={"/"}> */}
 
               {Lawyertoken && (
-                <Badge className="mx-2" badgeContent={4} color="primary">
-                  <i className="ri-notification-2-line"></i>
-                </Badge>
+                <Link to={"/EditProfileLaw/Messages"}>
+                  <Badge className="mx-2" badgeContent={4} color="primary">
+                    <i className="ri-notification-2-line text-white"></i>
+                  </Badge>
+                </Link>
               )}
 
               <div class="btn-group d-flex gap-3 align-items-center">
-
-
-
 
                 {
                   Usertoken ? (
@@ -1460,11 +1459,7 @@ function Navbar() {
                         {Usertoken.user.name} <i className="ri-arrow-down-s-line"></i>
                       </b>
                       <ul className="dropdown-menu dropdown-menu-end py-0">
-                        <li>
-                          <Link to="/Dashboard" className="dropdown-item fs-5 profile-hover-effect1">
-                            <i className="ri-dashboard-line me-2"></i> Dashboard
-                          </Link>
-                        </li>
+
                         <li>
                           <Link to="/EditProfile" className="dropdown-item fs-5 profile-hover-effect1">
                             <i className="ri-user-line me-2"></i> My Profile

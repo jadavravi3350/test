@@ -1,7 +1,7 @@
 import { Opacity, Phone, Visibility } from '@mui/icons-material';
 import { dark } from '@mui/material/styles/createPalette';
 import axios from 'axios';
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Link, Route, Routes, useNavigate } from 'react-router-dom'
 
 function BecomeServiceprovider() {
@@ -13,8 +13,6 @@ function BecomeServiceprovider() {
     setformdata(v)
 
   }
-
-
 
   return (
     <div className=' border-bottom pb-5'>
@@ -49,7 +47,7 @@ function BecomeServiceprovider() {
 function BecomeServiceproviderPersonalinfo({ props }) {
   const navi = useNavigate("");
 
-  const [image, setimage] = useState("");
+  const [image, setimage] = useState(null);
   const [fullName, setfullName] = useState("");
   const [mobileNumber, setmobileNumber] = useState("");
   const [email, setemail] = useState("");
@@ -69,7 +67,7 @@ function BecomeServiceproviderPersonalinfo({ props }) {
 
     e.preventDefault()
 
-    if (image === "" || fullName === "" || mobileNumber === "" || email === "" || password === "") {
+    if (image === null || fullName === "" || mobileNumber === "" || email === "" || password === "") {
       alert("Enter The value..?")
     }
 
@@ -97,13 +95,68 @@ function BecomeServiceproviderPersonalinfo({ props }) {
 
   }
 
+  // useEffect(() => {
+  //   if (image) {
+  //     // Save the image URL in localStorage when it's selected
+  //     localStorage.setItem("userImage", image);
+  //   }
+  // }, [image]);
+
+
+  const imageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      const img = new Image();
+      img.src = reader.result;
+
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        // Set new size (Adjust width & height as needed)
+        const MAX_WIDTH = 300;
+        const MAX_HEIGHT = 300;
+
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const resizedBase64 = canvas.toDataURL("image/jpeg", 0.7); // 70% quality for compression
+        setimage(resizedBase64);
+      };
+    };
+  };
+
+
   return (
     <div>
 
       <input
         type="file"
         ref={ref1}
-        onChange={(e) => setimage(URL.createObjectURL(e.target.files[0]))}
+        onChange={imageChange}
         style={{ display: "none" }}
       />
 
@@ -417,8 +470,6 @@ function BecomeServiceproviderProfessionalo({ props2 }) {
                     ))
 
                   }
-
-
 
                 </div>
               </div>
