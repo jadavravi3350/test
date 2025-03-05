@@ -143,10 +143,7 @@ function App() {
 
     return (
         <div> 
-      
-      <div>
-        div ok ravi 
-      </div>
+      wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
             <content.Provider value={{ Arr }}>
                 
                 <BrowserRouter>
